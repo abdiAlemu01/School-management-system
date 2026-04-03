@@ -7,6 +7,7 @@ type RegisterData = {
   email: string;
   password: string;
   gender: string;
+  role: "student";
 };
 
 import { useState } from "react";
@@ -16,6 +17,7 @@ import { useAuthStore } from "../store/authStore";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loader2, Mail, Lock, Eye, EyeOff, User, ChevronDown } from "lucide-react";
+import type { AxiosError } from "axios";
 
 function passwordStrength(p: string) {
   let s = 0;
@@ -35,12 +37,18 @@ const INPUT =
 
 function getRoleRedirect(role: string): string {
   switch (role) {
-    case "admin":      return "/admin/dashboard";
-    case "teacher":    return "/teacher/dashboard";
-    case "student":    return "/student/dashboard";
-    case "registrar":  return "/registrar/dashboard";
-    default:           return "/dashboard";
+    case "admin":
+    case "teacher":
+    case "student":
+    case "registrar":
+    default:
+      return "/dashboard";
   }
+}
+
+function getApiErrorMessage(error: unknown, fallback: string): string {
+  const axiosError = error as AxiosError<{ message?: string }>;
+  return axiosError.response?.data?.message || fallback;
 }
 
 export default function AuthPage() {
@@ -54,7 +62,14 @@ export default function AuthPage() {
   const [showLoginPw, setShowLoginPw] = useState(false);
 
   // Register state
-  const [reg, setReg] = useState<RegisterData>({ name: "", age: "", email: "", password: "", gender: "other" });
+  const [reg, setReg] = useState<RegisterData>({
+    name: "",
+    age: "",
+    email: "",
+    password: "",
+    gender: "other",
+    role: "student",
+  });
   const [showRegPw, setShowRegPw] = useState(false);
   const { score, label, color } = passwordStrength(reg.password);
 
@@ -69,8 +84,8 @@ export default function AuthPage() {
       });
       router.push(getRoleRedirect(user.role));
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Invalid credentials", {
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, "Invalid credentials"), {
         style: { background: "#1e1a1a", color: "#fca5a5", border: "1px solid #7f1d1d" },
       });
     },
@@ -78,16 +93,16 @@ export default function AuthPage() {
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterData) => authService.register({ ...data, age: Number(data.age) }),
-    onSuccess: (data) => {
-      const user = data.data.user;
-      setAuth(user, data.token);
-      toast.success("Account created! Redirecting…", {
+    onSuccess: () => {
+      toast.success("Account created! Please sign in.", {
         style: { background: "#1e293b", color: "#f8fafc", border: "1px solid #334155" },
       });
-      router.push(getRoleRedirect(user.role));
+      setLoginEmail(reg.email);
+      setLoginPassword("");
+      setView("login");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Registration failed", {
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, "Registration failed"), {
         style: { background: "#1e1a1a", color: "#fca5a5", border: "1px solid #7f1d1d" },
       });
     },
@@ -141,7 +156,7 @@ export default function AuthPage() {
 
             <div className="mt-8 pt-6 border-t border-slate-800/80 text-center">
               <p className="text-sm text-slate-500">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <button onClick={() => setView("register")} className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
                   Create account
                 </button>
@@ -218,6 +233,26 @@ export default function AuthPage() {
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300">Register as</label>
+                <div className="relative">
+                  <select
+                    required
+                    value={reg.role}
+                    onChange={(e) =>
+                      setReg({
+                        ...reg,
+                        role: e.target.value as RegisterData["role"],
+                      })
+                    }
+                    className="w-full pl-4 pr-10 py-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all hover:border-slate-600 appearance-none"
+                  >
+                    <option value="student">Student</option>
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                 </div>

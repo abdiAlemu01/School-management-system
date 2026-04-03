@@ -1,12 +1,26 @@
 import api from "./api";
 
+type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+type RegisterPayload = {
+  name: string;
+  age: number;
+  email: string;
+  password: string;
+  gender: string;
+  role: "student";
+};
+
 export const authService = {
-  login: async (data: any) => {
+  login: async (data: LoginPayload) => {
     const response = await api.post("/auth/login", data);
     return response.data;
   },
 
-  register: async (data: any) => {
+  register: async (data: RegisterPayload) => {
     const response = await api.post("/auth/register", data);
     return response.data;
   },

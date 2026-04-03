@@ -4,28 +4,89 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/authStore";
 import { useRouter } from "next/navigation";
 import {
-  LogOut, User as UserIcon, Settings, Bell, LayoutDashboard,
-  Calendar, BookOpen, GraduationCap, ChevronRight,
-  ShieldCheck, Activity, Users
+  LogOut, Settings, Bell,
+  GraduationCap, ChevronRight,
+  User as UserIcon, BookOpen, FileCheck, Info, ClipboardPenLine, Users, UserPlus,
+  CalendarDays, Trophy,
+  LayoutDashboard, Building2, School, Layers,
 } from "lucide-react";
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", active: true, color: "text-indigo-400" },
-  { icon: BookOpen, label: "My Courses", active: false, color: "text-purple-400" },
-  { icon: Calendar, label: "Schedule", active: false, color: "text-emerald-400" },
-  { icon: Users, label: "Classmates", active: false, color: "text-blue-400" },
+// Student views
+import AboutMeView from "./components/student/AboutMeView";
+import CoursesView from "./components/student/CoursesView";
+import RegistrationView from "./components/student/RegistrationView";
+import ApplicationView from "./components/student/ApplicationView";
+// Teacher views
+import TeacherAddMarkView  from "./components/teacher/TeacherAddMarkView";
+import TeacherStudentsView from "./components/teacher/TeacherStudentsView";
+import TeacherRankView     from "./components/teacher/TeacherRankView";
+// Registrar views
+import RegistrarStudentsView from "./components/registrar/RegistrarStudentsView";
+import RegistrarRegisterView from "./components/registrar/RegistrarRegisterView";
+// Department Head views
+import DHTimetableView from "./components/departmentHead/DHTimetableView";
+import DHAssignSectionStudent from "./components/departmentHead/DHAssignSectionStudent";
+import AdminOverviewView from "./components/admin/AdminOverviewView";
+import AdminUsersView from "./components/admin/AdminUsersView";
+import AdminRegisterView from "./components/admin/AdminRegisterView";
+import AdminDepartmentsView from "./components/admin/AdminDepartmentsView";
+import AdminClassesView from "./components/admin/AdminClassesView";
+import AdminSemestersView from "./components/admin/AdminSemestersView";
+import AdminCoursesView from "./components/admin/AdminCoursesView";
+
+const studentNavItems = [
+  { id: "about", icon: Info, label: "About Me", color: "text-indigo-400" },
+  { id: "courses", icon: BookOpen, label: "Courses", color: "text-purple-400" },
+  { id: "registration", icon: FileCheck, label: "Registration", color: "text-emerald-400" },
+  { id: "application", icon: UserIcon, label: "Application", color: "text-blue-400" },
 ];
 
-const statCards = [
-  { label: "Enrolled Courses", value: "0", icon: BookOpen, color: "text-indigo-400", bg: "bg-indigo-500/10 border-indigo-500/20" },
-  { label: "Attendance Rate", value: "—", icon: Activity, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
-  { label: "Grade Average", value: "—", icon: GraduationCap, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20" },
+const teacherNavItems = [
+  { id: "addMark",  icon: ClipboardPenLine, label: "Add Mark",   color: "text-indigo-400" },
+  { id: "students", icon: Users,            label: "Students",   color: "text-emerald-400" },
+  { id: "rank",     icon: Trophy,           label: "Class Rank", color: "text-yellow-400" },
+];
+
+const registrarNavItems = [
+  { id: "regStudents", icon: Users, label: "All Students", color: "text-indigo-400" },
+  { id: "regRegister", icon: UserPlus, label: "Register Student", color: "text-emerald-400" },
+];
+
+const departmentHeadNavItems = [
+  { id: "dhTimetable",       icon: CalendarDays,    label: "Timetable",        color: "text-emerald-400" },
+  { id: "dhAssignSections",  icon: GraduationCap,   label: "Assign Sections",  color: "text-amber-400"   },
+];
+
+const adminNavItems = [
+  { id: "adminOverview", icon: LayoutDashboard, label: "Overview", color: "text-indigo-400" },
+  { id: "adminRegister", icon: UserPlus, label: "Register", color: "text-blue-400" },
+  { id: "adminUsers", icon: Users, label: "Users", color: "text-emerald-400" },
+  { id: "adminDepartments", icon: Building2, label: "Departments", color: "text-cyan-400" },
+  { id: "adminClasses", icon: School, label: "Classes", color: "text-amber-400" },
+  { id: "adminSemesters", icon: CalendarDays, label: "Semesters", color: "text-violet-400" },
+  { id: "adminCourses", icon: Layers, label: "Course Init", color: "text-fuchsia-400" },
 ];
 
 export default function DashboardPage() {
   const { user, token, logout } = useAuthStore();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const isTeacher       = user?.role === "teacher";
+  const isRegistrar     = user?.role === "registrar";
+  const isDepartmentHead = user?.role === "departmentHead";
+  const isAdmin = user?.role === "admin";
+  const [activeTab, setActiveTab] = useState("about");
+  const navItems = isAdmin
+    ? adminNavItems
+    : isTeacher
+    ? teacherNavItems
+    : isRegistrar
+    ? registrarNavItems
+    : isDepartmentHead
+    ? departmentHeadNavItems
+    : studentNavItems;
+  const effectiveActiveTab =
+    navItems.find((item) => item.id === activeTab)?.id || navItems[0]?.id || "about";
 
   useEffect(() => {
     setMounted(true);
@@ -45,6 +106,67 @@ export default function DashboardPage() {
     );
   }
 
+  const renderContent = () => {
+    if (isAdmin) {
+      switch (effectiveActiveTab) {
+        case "adminRegister":
+          return <AdminRegisterView />;
+        case "adminUsers":
+          return <AdminUsersView />;
+        case "adminDepartments":
+          return <AdminDepartmentsView />;
+        case "adminClasses":
+          return <AdminClassesView />;
+        case "adminSemesters":
+          return <AdminSemestersView />;
+        case "adminCourses":
+          return <AdminCoursesView />;
+        default:
+          return <AdminOverviewView />;
+      }
+    }
+
+    if (isTeacher) {
+      switch (effectiveActiveTab) {
+        case "addMark":  return <TeacherAddMarkView />;
+        case "students": return <TeacherStudentsView />;
+        case "rank":     return <TeacherRankView />;
+        default:         return <TeacherAddMarkView />;
+      }
+    }
+
+    if (isRegistrar) {
+      switch (effectiveActiveTab) {
+        case "regStudents":
+          return <RegistrarStudentsView />;
+        case "regRegister":
+          return <RegistrarRegisterView />;
+        default:
+          return <RegistrarStudentsView />;
+      }
+    }
+
+    if (isDepartmentHead) {
+      switch (effectiveActiveTab) {
+        case "dhAssignSections": return <DHAssignSectionStudent />;
+        default:                 return <DHTimetableView />;
+      }
+    }
+
+    switch (effectiveActiveTab) {
+      case "about":
+        return <AboutMeView />;
+      case "courses":
+        return <CoursesView />;
+      case "registration":
+        return <RegistrationView />;
+      case "application":
+        return <ApplicationView />;
+      default:
+        return <AboutMeView />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] flex">
 
@@ -62,20 +184,35 @@ export default function DashboardPage() {
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p className="px-3 mb-2 text-xs font-semibold text-slate-600 uppercase tracking-widest">Main</p>
-          {navItems.map(({ icon: Icon, label, active, color }) => (
-            <a key={label} href="#"
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
-                active
-                  ? "bg-indigo-600/15 text-indigo-300 border border-indigo-500/20"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${active ? "text-indigo-400" : `group-hover:${color}`} transition-colors shrink-0`} />
-              {label}
-              {active && <ChevronRight className="w-3.5 h-3.5 ml-auto text-indigo-500" />}
-            </a>
-          ))}
+          <p className="px-3 mb-2 text-xs font-semibold text-slate-600 uppercase tracking-widest">
+            {isAdmin
+              ? "Admin Portal"
+              : isTeacher
+              ? "Teacher Portal"
+              : isRegistrar
+              ? "Registrar Office"
+              : isDepartmentHead
+              ? "Department Head"
+              : "Student Portal"}
+          </p>
+          {navItems.map(({ id, icon: Icon, label, color }) => {
+            const active = effectiveActiveTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
+                  active
+                    ? "bg-indigo-600/15 text-indigo-300 border border-indigo-500/20"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${active ? "text-indigo-400" : `group-hover:${color}`} transition-colors shrink-0`} />
+                {label}
+                {active && <ChevronRight className="w-3.5 h-3.5 ml-auto text-indigo-500" />}
+              </button>
+            );
+          })}
         </nav>
 
         {/* User footer */}
@@ -100,13 +237,15 @@ export default function DashboardPage() {
       </aside>
 
       {/* ── Main Content ── */}
-      <div className="flex-1 md:ml-64 xl:ml-72 flex flex-col min-h-screen">
+      <div className="flex-1 md:ml-64 xl:ml-72 flex flex-col min-h-screen relative z-10">
 
         {/* Top Header */}
         <header className="h-16 sticky top-0 z-20 flex items-center justify-between px-6 border-b border-slate-800/70 bg-slate-900/50 backdrop-blur-md">
           <div>
-            <h1 className="text-lg font-bold text-white tracking-tight">Dashboard</h1>
-            <p className="text-slate-500 text-xs hidden sm:block">Overview of your academic activity</p>
+            <h1 className="text-lg font-bold text-white tracking-tight capitalize">
+              {navItems.find((n) => n.id === effectiveActiveTab)?.label}
+            </h1>
+            <p className="text-slate-500 text-xs hidden sm:block">Welcome back, {user.name.split(" ")[0]} 👋</p>
           </div>
           <div className="flex items-center gap-2">
             <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all border border-transparent hover:border-slate-700">
@@ -126,86 +265,8 @@ export default function DashboardPage() {
           {/* Ambient glow */}
           <div aria-hidden className="pointer-events-none absolute top-0 right-0 w-[600px] h-[400px] bg-indigo-600/5 rounded-full blur-[120px]" />
 
-          {/* Welcome */}
-          <div className="mb-8 relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-1">
-              Good day, {user.name.split(" ")[0]}! 👋
-            </h2>
-            <p className="text-slate-400 text-sm">Here's a summary of your academic standing.</p>
-          </div>
-
-          {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 relative z-10">
-            {statCards.map(({ label, value, icon: Icon, color, bg }) => (
-              <div key={label} className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/70 hover:border-slate-700 transition-all shadow-lg hover:shadow-xl backdrop-blur-sm">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 border ${bg}`}>
-                  <Icon className={`w-5 h-5 ${color}`} />
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">{value}</p>
-                <p className="text-slate-400 text-sm">{label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Profile + Status Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 relative z-10">
-
-            {/* Profile Card */}
-            <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900/50 border border-slate-800/70 backdrop-blur-xl shadow-xl hover:border-slate-700 transition-all">
-              <div className="flex items-center gap-3 mb-5">
-                <UserIcon className="w-5 h-5 text-indigo-400" />
-                <h3 className="text-base font-bold text-white">Account Details</h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  { label: "Full Name", value: user.name },
-                  { label: "Email Address", value: user.email },
-                  { label: "Role", value: user.role, isTag: true },
-                  { label: "User ID", value: user._id, isMono: true },
-                ].map(({ label, value, isTag, isMono }) => (
-                  <div key={label} className="p-4 rounded-xl bg-slate-950/50 border border-slate-800/60">
-                    <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1.5">{label}</p>
-                    {isTag ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 text-xs font-semibold capitalize border border-indigo-500/25">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />{value}
-                      </span>
-                    ) : (
-                      <p className={`text-slate-100 text-sm font-medium truncate ${isMono ? "font-mono text-xs text-slate-400" : ""}`}>{value}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Status Panel */}
-            <div className="p-6 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/50 border border-slate-800/70 backdrop-blur-xl shadow-xl hover:border-slate-700 transition-all flex flex-col">
-              <div className="flex items-center gap-3 mb-5">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-base font-bold text-white">System Status</h3>
-              </div>
-              <div className="flex-1 space-y-3">
-                {[
-                  { label: "Authentication", status: "Active", color: "text-emerald-400", dot: "bg-emerald-500" },
-                  { label: "Database Link", status: "Connected", color: "text-emerald-400", dot: "bg-emerald-500" },
-                  { label: "Session Token", status: "Valid", color: "text-indigo-400", dot: "bg-indigo-500" },
-                ].map(({ label, status, color, dot }) => (
-                  <div key={label} className="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-slate-800/50">
-                    <span className="text-slate-300 text-sm">{label}</span>
-                    <span className={`flex items-center gap-1.5 text-xs font-semibold ${color}`}>
-                      <span className={`w-2 h-2 rounded-full ${dot} animate-pulse`} />
-                      {status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => { logout(); router.push("/login"); }}
-                className="mt-5 w-full py-2.5 rounded-xl text-sm font-semibold text-rose-400 border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/15 hover:border-rose-500/30 transition-all flex items-center justify-center gap-2 group"
-              >
-                <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                Sign Out
-              </button>
-            </div>
+          <div className="relative z-10">
+            {renderContent()}
           </div>
         </main>
       </div>

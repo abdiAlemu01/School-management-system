@@ -1,0 +1,7 @@
+app/dashboard/components/AboutMeView.tsx(3,39): error TS2307: Cannot find module '../../../../hooks/useStudent' or its corresponding type declarations.
+app/dashboard/components/ApplicationView.tsx(3,35): error TS2307: Cannot find module '../../../../hooks/useStudent' or its corresponding type declarations.
+app/dashboard/components/CoursesView.tsx(3,35): error TS2307: Cannot find module '../../../../hooks/useStudent' or its corresponding type declarations.
+app/dashboard/components/CoursesView.tsx(43,23): error TS7006: Parameter 'course' implicitly has an 'any' type.
+app/dashboard/components/RegistrationView.tsx(3,40): error TS2307: Cannot find module '../../../../hooks/useStudent' or its corresponding type declarations.
+app/dashboard/components/RegistrationView.tsx(48,29): error TS7006: Parameter 'course' implicitly has an 'any' type.
+app/dashboard/components/RegistrationView.tsx(48,37): error TS7006: Parameter 'index' implicitly has an 'any' type.
