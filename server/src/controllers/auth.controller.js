@@ -4,7 +4,7 @@ import { User, Student, Teacher, DepartmentHead } from "../config/model.js";
 import AppError from "../utils/AppError.js";
 
 const ALL_ROLES = ["admin", "teacher", "student", "registrar", "departmentHead"];
-const PUBLIC_REGISTER_ROLES = ["student"];
+const PUBLIC_REGISTER_ROLES = ["student", "admin"];
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "fallback_secret", {

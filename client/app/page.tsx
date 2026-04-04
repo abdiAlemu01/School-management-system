@@ -7,7 +7,7 @@ type RegisterData = {
   email: string;
   password: string;
   gender: string;
-  role: "student";
+  role: "student" | "admin";
 };
 
 import { useState } from "react";
@@ -253,6 +253,7 @@ export default function AuthPage() {
                     className="w-full pl-4 pr-10 py-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all hover:border-slate-600 appearance-none"
                   >
                     <option value="student">Student</option>
+                    <option value="admin">Admin</option>
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                 </div>
