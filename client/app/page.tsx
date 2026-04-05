@@ -10,7 +10,12 @@ type RegisterData = {
   role: "student" | "admin";
 };
 
-import { useState } from "react";
+type SavedCredential = {
+  email: string;
+  password: string;
+};
+
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { useAuthStore } from "../store/authStore";
@@ -33,7 +38,7 @@ function passwordStrength(p: string) {
 }
 
 const INPUT =
-  "w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-slate-100 placeholder:text-slate-600 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all hover:border-slate-600";
+  "w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border-2 border-slate-500/90 text-slate-100 placeholder:text-slate-600 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40 transition-all hover:border-slate-400";
 
 function getRoleRedirect(role: string): string {
   switch (role) {
@@ -58,10 +63,15 @@ export default function AuthPage() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const [view, setView] = useState<"login" | "register">("login");
 
+  const [recentCredentials, setRecentCredentials] = useState<SavedCredential[]>([]);
+  const [showCredentialSuggestions, setShowCredentialSuggestions] = useState(false);
+  const emailFieldWrapperRef = useRef<HTMLDivElement | null>(null);
+
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPw, setShowLoginPw] = useState(false);
+  const [allowLoginInputEditing, setAllowLoginInputEditing] = useState(false);
 
   // Register state
   const [reg, setReg] = useState<RegisterData>({
@@ -75,12 +85,81 @@ export default function AuthPage() {
   const [showRegPw, setShowRegPw] = useState(false);
   const { score, label, color } = passwordStrength(reg.password);
 
+  function resetLoginForm() {
+    setLoginEmail("");
+    setLoginPassword("");
+    setShowLoginPw(false);
+    setAllowLoginInputEditing(false);
+  }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = localStorage.getItem("sms_recent_credentials");
+      if (stored) {
+        const parsed = JSON.parse(stored) as SavedCredential[];
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed
+            .filter((item) => typeof item?.email === "string" && typeof item?.password === "string")
+            .slice(0, 6);
+          setRecentCredentials(cleaned);
+        }
+      }
+    } catch {
+      // ignore malformed storage
+    }
+  }, []);
+
+  useEffect(() => {
+    function onClickOutside(event: MouseEvent) {
+      if (!emailFieldWrapperRef.current) return;
+      if (!emailFieldWrapperRef.current.contains(event.target as Node)) {
+        setShowCredentialSuggestions(false);
+      }
+    }
+
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (view === "login") {
+      resetLoginForm();
+    }
+  }, [view]);
+
+  function saveRecentCredential(email: string, password: string) {
+    if (!email || !password) return;
+    setRecentCredentials((prev) => {
+      const next = [{ email, password }, ...prev.filter((item) => item.email !== email)].slice(0, 6);
+      try {
+        localStorage.setItem("sms_recent_credentials", JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }
+
+  function applySavedCredential(credential: SavedCredential) {
+    setAllowLoginInputEditing(true);
+    setLoginEmail(credential.email);
+    setLoginPassword(credential.password);
+    setShowCredentialSuggestions(false);
+  }
+
+  const filteredCredentials = recentCredentials.filter((item) =>
+    item.email.toLowerCase().includes(loginEmail.toLowerCase())
+  );
+
   // Mutations
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
       const user = data.data.user;
       setAuth(user, data.token);
+      saveRecentCredential(loginEmail.trim(), loginPassword);
+      resetLoginForm();
       toast.success(`Welcome back, ${user.name.split(" ")[0]}!`, {
         style: { background: "#1e293b", color: "#f8fafc", border: "1px solid #334155" },
       });
@@ -99,8 +178,7 @@ export default function AuthPage() {
       toast.success("Account created! Please sign in.", {
         style: { background: "#1e293b", color: "#f8fafc", border: "1px solid #334155" },
       });
-      setLoginEmail(reg.email);
-      setLoginPassword("");
+      resetLoginForm();
       setView("login");
     },
     onError: (error: unknown) => {
@@ -119,41 +197,86 @@ export default function AuthPage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[400px] bg-violet-700/10 rounded-full blur-[140px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md px-6 py-12">
+      <div className="relative z-10 w-full max-w-lg px-6 py-12">
 
         {/* ══════════ LOGIN VIEW ══════════ */}
         {view === "login" && (
           <div>
-           
+            <div className="mb-7 text-center">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                🏫 School Management System
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-slate-300">
+                Smart, Simple, and Efficient School Administration Platform
+              </p>
+            </div>
 
-            <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); loginMutation.mutate({ email: loginEmail, password: loginPassword }); }}>
+            <form autoComplete="off" className="space-y-5" onSubmit={(e) => { e.preventDefault(); loginMutation.mutate({ email: loginEmail, password: loginPassword }); }}>
 
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-300">Email address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
-                  <input type="email" required autoComplete="username" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="example@gmail.com" className={INPUT} />
+              <div className="rounded-2xl border-2 border-slate-500/90 bg-slate-950/40 p-6 space-y-5 min-h-[320px]">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-300">Email address</label>
+                  <div ref={emailFieldWrapperRef} className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                    <input
+                      type="email"
+                      name="login-email"
+                      required
+                      autoComplete="off"
+                      readOnly={!allowLoginInputEditing}
+                      onFocus={() => {
+                        setAllowLoginInputEditing(true);
+                        setShowCredentialSuggestions(true);
+                      }}
+                      value={loginEmail}
+                      onChange={(e) => {
+                        setLoginEmail(e.target.value);
+                        setShowCredentialSuggestions(true);
+                      }}
+                      placeholder="Enter email"
+                      className={INPUT}
+                    />
+
+                    {showCredentialSuggestions && filteredCredentials.length > 0 && (
+                      <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-xl shadow-black/40">
+                        {filteredCredentials.map((credential) => (
+                          <button
+                            key={credential.email}
+                            type="button"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              applySavedCredential(credential);
+                            }}
+                            className="w-full px-4 py-2.5 text-left hover:bg-slate-800/80 transition-colors border-b border-slate-800 last:border-b-0"
+                          >
+                            <div className="text-sm text-slate-200">{credential.email}</div>
+                            <div className="text-xs text-slate-400">{"•".repeat(Math.max(8, credential.password.length))}</div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-slate-300">Password</label>
+                    <a href="#" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                    <input type={showLoginPw ? "text" : "password"} name="login-password" required autoComplete="off" readOnly={!allowLoginInputEditing} onFocus={() => setAllowLoginInputEditing(true)} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="Enter password" className={`${INPUT} pr-12`} />
+                    <button type="button" onClick={() => setShowLoginPw(!showLoginPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                      {showLoginPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" disabled={loginMutation.isPending}
+                  className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-900/40 hover:shadow-indigo-900/60 hover:scale-[1.01] flex items-center justify-center gap-2">
+                  {loginMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in…</> : "Sign in"}
+                </button>
               </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-slate-300">Password</label>
-                  <a href="#" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Forgot password?</a>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
-                  <input type={showLoginPw ? "text" : "password"} required autoComplete="current-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="••••••••" className={`${INPUT} pr-12`} />
-                  <button type="button" onClick={() => setShowLoginPw(!showLoginPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-                    {showLoginPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <button type="submit" disabled={loginMutation.isPending}
-                className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-900/40 hover:shadow-indigo-900/60 hover:scale-[1.01] flex items-center justify-center gap-2">
-                {loginMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in…</> : "Sign in"}
-              </button>
             </form>
 
           </div>
@@ -262,7 +385,7 @@ export default function AuthPage() {
             <div className="mt-6 pt-6 border-t border-slate-800/80 text-center">
               <p className="text-sm text-slate-500">
                 Already have an account?{" "}
-                <button onClick={() => setView("login")} className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+                <button onClick={() => { resetLoginForm(); setView("login"); }} className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
                   Sign in
                 </button>
               </p>
