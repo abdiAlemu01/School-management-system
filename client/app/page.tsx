@@ -41,6 +41,8 @@ function getRoleRedirect(role: string): string {
     case "teacher":
     case "student":
     case "registrar":
+    case "departmentHead":
+    case "finance":
     default:
       return "/dashboard";
   }
@@ -154,14 +156,6 @@ export default function AuthPage() {
               </button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-slate-800/80 text-center">
-              <p className="text-sm text-slate-500">
-                Don&apos;t have an account?{" "}
-                <button onClick={() => setView("register")} className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
-                  Create account
-                </button>
-              </p>
-            </div>
           </div>
         )}
 

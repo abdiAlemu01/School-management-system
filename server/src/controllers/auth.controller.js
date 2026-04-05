@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { User, Student, Teacher, DepartmentHead } from "../config/model.js";
 import AppError from "../utils/AppError.js";
 
-const ALL_ROLES = ["admin", "teacher", "student", "registrar", "departmentHead"];
+const ALL_ROLES = ["admin", "teacher", "student", "registrar", "departmentHead", "finance"];
 const PUBLIC_REGISTER_ROLES = ["student", "admin"];
 
 const signToken = (id) => {

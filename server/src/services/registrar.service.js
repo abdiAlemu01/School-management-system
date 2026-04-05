@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { User, Student, Class, Course, Enrollment } from "../config/model.js";
 import AppError from "../utils/AppError.js";
+import { createOrUpdatePaidFinanceRecord } from "./finance.service.js";
 
 // ─── Course catalogue ────────────────────────────────────────────────────────
 // Defines which courses belong to each grade/stream.
@@ -168,6 +169,12 @@ export const registerStudent = async (data) => {
     classId: cls._id,
   });
 
+  // 5.1 Auto-create finance record as fully paid (required by finance policy)
+  const financeRecord = await createOrUpdatePaidFinanceRecord({
+    studentObjectId: student._id,
+    grade: Number(grade),
+  });
+
   // 6. Fetch matching courses and enroll
   const courses = await getCoursesByGradeStream(Number(grade), normalizedStream);
   const enrollments = await enrollStudentInCourses(student._id, courses);
@@ -189,6 +196,12 @@ export const registerStudent = async (data) => {
       academicYear: cls.academicYear,
     },
     enrolledCourses: enrollments.length,
+    finance: {
+      totalFee: financeRecord.totalFee,
+      paidAmount: financeRecord.paidAmount,
+      remainingBalance: financeRecord.remainingBalance,
+      status: financeRecord.status,
+    },
   };
 };
 

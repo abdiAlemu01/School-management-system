@@ -21,6 +21,10 @@ import {
   getCoursesHandler,
   updateCourseHandler,
   deleteCourseHandler,
+  getAdminFinanceStudentsHandler,
+  getAdminFinanceSummaryHandler,
+  getAdminFinanceFeesHandler,
+  updateAdminFinanceFeesHandler,
   validateIdParam,
 } from "../controllers/admin.controller.js";
 
@@ -49,5 +53,12 @@ router
 
 router.route("/courses").post(createCourseHandler).get(getCoursesHandler);
 router.route("/courses/:id").put(validateIdParam, updateCourseHandler).delete(validateIdParam, deleteCourseHandler);
+
+router.get("/finance/students", getAdminFinanceStudentsHandler);
+router.get("/finance/summary", getAdminFinanceSummaryHandler);
+router
+  .route("/finance/fees")
+  .get(getAdminFinanceFeesHandler)
+  .put(updateAdminFinanceFeesHandler);
 
 export default router;

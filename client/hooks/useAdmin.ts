@@ -12,17 +12,12 @@ import {
   createAdminClass,
   updateAdminClass,
   deleteAdminClass,
-  getAdminSemesters,
-  createAdminSemester,
-  updateAdminSemester,
-  deleteAdminSemester,
   getAdminCourses,
   createAdminCourse,
   updateAdminCourse,
   deleteAdminCourse,
   type CreateAdminUserPayload,
   type CreateAdminClassPayload,
-  type CreateAdminSemesterPayload,
   type CreateAdminCoursePayload,
 } from "../services/admin.service";
 
@@ -30,7 +25,6 @@ const adminKeys = {
   users: ["admin-users"],
   departments: ["admin-departments"],
   classes: ["admin-classes"],
-  semesters: ["admin-semesters"],
   courses: ["admin-courses"],
 };
 
@@ -38,8 +32,6 @@ export const useAdminUsers = () => useQuery({ queryKey: adminKeys.users, queryFn
 export const useAdminDepartments = () =>
   useQuery({ queryKey: adminKeys.departments, queryFn: getAdminDepartments });
 export const useAdminClasses = () => useQuery({ queryKey: adminKeys.classes, queryFn: getAdminClasses });
-export const useAdminSemesters = () =>
-  useQuery({ queryKey: adminKeys.semesters, queryFn: getAdminSemesters });
 export const useAdminCourses = () => useQuery({ queryKey: adminKeys.courses, queryFn: getAdminCourses });
 
 export const useCreateAdminUser = () => {
@@ -114,31 +106,6 @@ export const useDeleteAdminClass = () => {
   return useMutation({
     mutationFn: (id: string) => deleteAdminClass(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: adminKeys.classes }),
-  });
-};
-
-export const useCreateAdminSemester = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: CreateAdminSemesterPayload) => createAdminSemester(payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: adminKeys.semesters }),
-  });
-};
-
-export const useUpdateAdminSemester = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateAdminSemesterPayload> }) =>
-      updateAdminSemester(id, payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: adminKeys.semesters }),
-  });
-};
-
-export const useDeleteAdminSemester = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => deleteAdminSemester(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: adminKeys.semesters }),
   });
 };
 

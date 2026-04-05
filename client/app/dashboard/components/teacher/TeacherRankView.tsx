@@ -56,7 +56,7 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <BarChart3 className="w-10 h-10 text-slate-600" />
-        <p className="text-slate-500 text-sm">No marks recorded yet for this selection.</p>
+        <p className="text-slate-500 text-base">No marks recorded yet for this selection.</p>
       </div>
     );
   }
@@ -67,7 +67,7 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
 
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-800">
-      <table className="w-full text-sm">
+      <table className="w-full text-base">
         <thead>
           <tr className="border-b border-slate-800 bg-slate-900/60">
             <th className="px-4 py-3 text-left text-slate-500 font-semibold w-16">Rank</th>
@@ -121,7 +121,7 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
                 </td>
 
                 {/* Student ID */}
-                <td className="px-4 py-3 text-center text-slate-400 font-mono text-xs">
+                <td className="px-4 py-3 text-center text-slate-400 font-mono text-sm">
                   {s.studentId}
                 </td>
 
@@ -136,11 +136,11 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
                           {t}
                         </span>
                         {bd?.count ? (
-                          <span className="text-slate-600 text-xs ml-1">
+                          <span className="text-slate-600 text-sm ml-1">
                             /{(bd.count * 100)}
                           </span>
                         ) : (
-                          <span className="text-slate-700 text-xs ml-1">—</span>
+                          <span className="text-slate-700 text-sm ml-1">—</span>
                         )}
                       </td>
                     );
@@ -161,7 +161,7 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
                   >
                     {s.totalScore}
                   </span>
-                  <span className="text-slate-600 text-xs ml-1">/{s.courseCount * 100}</span>
+                  <span className="text-slate-600 text-sm ml-1">/{s.courseCount * 100}</span>
                 </td>
 
                 {/* Average */}
@@ -169,7 +169,7 @@ const RankTable = ({ students, semesters, semesterId }: RankTableProps) => {
                   <span className={`font-semibold ${scoreBadge(s.average, 100)}`}>
                     {s.average.toFixed(1)}
                   </span>
-                  <span className="text-slate-600 text-xs">/100</span>
+                  <span className="text-slate-600 text-sm">/100</span>
                 </td>
 
                 {/* Subjects count */}
@@ -229,7 +229,7 @@ export default function TeacherRankView() {
             <Trophy className="w-5 h-5 text-yellow-400" />
             Class Rank
           </h2>
-          <p className="text-slate-500 text-sm mt-0.5">
+          <p className="text-slate-500 text-base mt-0.5">
             View student rankings by semester or combined score
           </p>
         </div>
@@ -237,13 +237,13 @@ export default function TeacherRankView() {
 
       {/* Class selector */}
       {sectionsLoading ? (
-        <div className="flex items-center gap-2 text-slate-400 text-sm">
+        <div className="flex items-center gap-2 text-slate-400 text-base">
           <Loader2 className="w-4 h-4 animate-spin" /> Loading classes…
         </div>
       ) : classes.length === 0 ? (
-        <div className="flex items-center gap-2 p-4 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-400 text-sm">
+        <div className="flex items-center gap-2 p-4 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-400 text-base">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          No classes assigned yet. Contact the Department Head to set up your timetable.
+          No classes assigned for you yet. 
         </div>
       ) : (
         <div className="flex flex-wrap gap-3 items-center">
@@ -254,7 +254,7 @@ export default function TeacherRankView() {
                 setSelectedClassId(e.target.value);
                 setSemesterId("all");
               }}
-              className="appearance-none bg-slate-800/60 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2.5 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 min-w-[220px]"
+              className="appearance-none bg-slate-800/60 border border-slate-700 text-slate-200 text-base rounded-xl px-4 py-2.5 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 min-w-[220px]"
             >
               <option value="">— Select a Class —</option>
               {classes.map((c) => (
@@ -270,7 +270,7 @@ export default function TeacherRankView() {
           </div>
 
           {selectedClass && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-base">
               <Users className="w-4 h-4" />
               <span>
                 Grade {selectedClass.grade}
@@ -288,15 +288,15 @@ export default function TeacherRankView() {
       {!selectedClassId ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4 text-slate-600">
           <Trophy className="w-12 h-12 opacity-40" />
-          <p className="text-sm">Select a class above to see the student ranking.</p>
+          <p className="text-base">Select a class above to see the student rank.</p>
         </div>
       ) : rankLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
-          <p className="text-slate-500 text-sm">Loading ranks…</p>
+          <p className="text-slate-500 text-base">Loading ranks…</p>
         </div>
       ) : rankError ? (
-        <div className="flex items-center gap-3 p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 text-sm">
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 text-base">
           <AlertCircle className="w-4 h-4 shrink-0" />
           {(rankError as Error).message ?? "Failed to load ranks."}
         </div>
@@ -310,7 +310,7 @@ export default function TeacherRankView() {
                 <button
                   key={tab.id}
                   onClick={() => setSemesterId(tab.id)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                  className={`px-4 py-1.5 rounded-full text-base font-medium transition-all border ${
                     semesterId === tab.id
                       ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-900/30"
                       : "bg-slate-800/60 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-600"
@@ -363,8 +363,8 @@ export default function TeacherRankView() {
                   key={label}
                   className={`rounded-xl p-3 border ${bg} flex flex-col gap-1`}
                 >
-                  <p className="text-slate-500 text-xs">{label}</p>
-                  <p className={`text-xl font-bold ${color}`}>{value}</p>
+                  <p className="text-slate-500 text-sm">{label}</p>
+                  <p className={`text-2xl font-bold ${color}`}>{value}</p>
                 </div>
               ))}
             </div>

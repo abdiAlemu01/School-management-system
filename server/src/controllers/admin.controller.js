@@ -21,6 +21,12 @@ import {
   updateCourse,
   deleteCourse,
 } from "../services/admin.service.js";
+import {
+  getStudentFinanceRecords,
+  getFinanceSummary,
+  getGradeFees,
+  updateGradeFees,
+} from "../services/finance.service.js";
 
 const withHandler = (serviceFn, statusCode = 200) => async (req, res, next) => {
   try {
@@ -55,6 +61,13 @@ export const createCourseHandler = withHandler((req) => createCourse(req.body), 
 export const getCoursesHandler = withHandler(() => getCourses());
 export const updateCourseHandler = withHandler((req) => updateCourse(req.params.id, req.body));
 export const deleteCourseHandler = withHandler((req) => deleteCourse(req.params.id));
+
+export const getAdminFinanceStudentsHandler = withHandler((req) =>
+  getStudentFinanceRecords({ grade: req.query.grade })
+);
+export const getAdminFinanceSummaryHandler = withHandler(() => getFinanceSummary());
+export const getAdminFinanceFeesHandler = withHandler(() => getGradeFees());
+export const updateAdminFinanceFeesHandler = withHandler((req) => updateGradeFees(req.body));
 
 export const validateIdParam = (req, _res, next) => {
   if (!req.params.id) {

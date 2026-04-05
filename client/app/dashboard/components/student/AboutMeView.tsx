@@ -93,7 +93,7 @@ function SemBlock({
       {empty ? (
         <div className="flex flex-col items-center justify-center py-10 gap-2 text-slate-700">
           <BookOpen className="w-8 h-8 opacity-40" />
-          <p className="text-sm">No marks released yet</p>
+          <h1 className="text-xl">No marks released yet</h1>
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-3 p-4">

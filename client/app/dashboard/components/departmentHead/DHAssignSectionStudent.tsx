@@ -29,7 +29,7 @@ const SECTION_COLORS: Record<string, string> = {
   F: "bg-sky-600/25 text-sky-300 border-sky-500/30",
 };
 
-// ─── Section select cell ──────────────────────────────────────────────────────
+
 
 function SectionSelect({
   student,
@@ -139,10 +139,7 @@ export default function DHAssignSectionStudent() {
 
       {/* ── Header ── */}
       <div>
-        <h2 className="text-2xl font-bold text-white">Assign Sections</h2>
-        <p className="text-slate-400 text-sm mt-0.5">
-          Assign registered students to a class section for {viewLabel}
-        </p>
+        <h2 className="text-2xl font-bold text-white">Assign Section/class for student</h2>
       </div>
 
       {/* ── Grade tabs ── */}
@@ -186,19 +183,19 @@ export default function DHAssignSectionStudent() {
         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 border border-slate-800/50 rounded-xl">
           <Users className="w-4 h-4 text-slate-400" />
           <span className="text-slate-300">
-            <span className="text-white font-semibold">{students.length}</span> students in {viewLabel}
+            <span className="text-white font-semibold">{students.length}</span> students in {viewLabel}.
           </span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-600/10 border border-emerald-500/20 rounded-xl">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span className="text-emerald-300">
-            <span className="text-white font-semibold">{assigned.length}</span> assigned
+            <span className="text-white font-semibold">{assigned.length}</span> assigned students
           </span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-600/10 border border-amber-500/20 rounded-xl">
           <AlertCircle className="w-4 h-4 text-amber-400" />
           <span className="text-amber-300">
-            <span className="text-white font-semibold">{unassigned.length}</span> unassigned
+            <span className="text-white font-semibold">{unassigned.length}</span> unassigned students
           </span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600/10 border border-indigo-500/20 rounded-xl">
@@ -214,7 +211,7 @@ export default function DHAssignSectionStudent() {
         <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25">
           <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div>
-            <p className="text-amber-300 font-semibold text-sm">No sections for {viewLabel} yet</p>
+            <p className="text-amber-300 font-semibold text-sm">For now no sections for {viewLabel} yet.</p>
             <p className="text-amber-400/70 text-xs mt-0.5">
               Go to the <span className="font-medium text-amber-300">Timetable</span> tab and click
               &quot;Add Section&quot; to create Section A, B, C… for this grade first.
@@ -226,25 +223,26 @@ export default function DHAssignSectionStudent() {
       {/* ── Loading ── */}
       {isLoading && (
         <div className="flex justify-center py-20">
-          <div className="w-9 h-9 rounded-full border-4 border-indigo-500/30 border-t-indigo-500 animate-spin" />
+          <div className="w-9 h-9 rounded-full border-4 border-indigo-500/30
+           border-t-indigo-500 animate-spin" />
         </div>
       )}
 
       {/* ── Error ── */}
       {isError && (
-        <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-sm">
+        <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 
+        rounded-xl text-sm">
           {getApiErrorMessage(error, "Failed to load students")}
         </div>
       )}
 
       {/* ── No students ── */}
       {!isLoading && !isError && students.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-2xl border border-slate-800/70 border-dashed">
+        <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-2xl
+         border border-slate-800/70 border-dashed">
           <Users className="w-12 h-12 text-slate-700 mb-3" />
-          <p className="text-white font-medium">No students in {viewLabel}</p>
-          <p className="text-slate-500 text-sm mt-1 text-center max-w-xs">
-            Register students via the <span className="text-indigo-400">Registrar</span> module first.
-          </p>
+          <p className="text-white font-medium">For now no students in {viewLabel}</p>
+          
         </div>
       )}
 

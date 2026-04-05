@@ -10,7 +10,7 @@ import type { StudentRegistrationPayload, StreamType } from "../../../../service
 const CURRENT_YEAR = new Date().getFullYear();
 const ACADEMIC_YEARS = Array.from({ length: 5 }, (_, i) => {
   const y = CURRENT_YEAR - i;
-  return `${y}/${y + 1}`;
+  return `${y}`;
 });
 
 type FieldProps = {
@@ -23,21 +23,24 @@ type FieldProps = {
 function Field({ label, required, children, hint }: FieldProps) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+      <label className="block text-sm font-semibold text-slate-400 uppercase tracking-wider">
         {label}
         {required && <span className="text-rose-400 ml-1">*</span>}
       </label>
       {children}
-      {hint && <p className="text-slate-600 text-xs">{hint}</p>}
+      {hint && <p className="text-slate-600 text-sm">{hint}</p>}
     </div>
   );
 }
 
 const inputClass =
-  "w-full bg-slate-950/60 border border-slate-800/70 text-white rounded-xl px-4 py-2.5 text-sm placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition";
+  "w-full bg-slate-950/60 border border-slate-800/70 text-white rounded-xl px-4 py-3.5 text-base placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition";
 
 const selectClass =
-  "w-full bg-slate-950/60 border border-slate-800/70 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition [&>option]:bg-slate-900";
+  "w-full bg-slate-950/60 border border-slate-800/70 text-white rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition [&>option]:bg-slate-900";
+
+const numberInputClass =
+  `${inputClass} appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`;
 
 const defaultForm: Omit<StudentRegistrationPayload, "grade" | "stream"> & {
   grade: string;
@@ -143,9 +146,9 @@ export default function RegistrarRegisterView() {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-white">Register Student</h2>
-        <p className="text-slate-400 text-sm mt-0.5">
-          Fill in the details below. Courses will be auto-assigned based on grade and stream.
+        <h2 className="text-3xl font-bold text-white">Register Student</h2>
+        <p className="text-slate-400 text-base mt-0.5">
+          Fill in the details below information. Courses will be automatically assigned based on grade and stream for the students.
         </p>
       </div>
 
@@ -154,12 +157,12 @@ export default function RegistrarRegisterView() {
         <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
           <div>
-            <p className="text-emerald-300 font-semibold text-sm">Student Registered!</p>
-            <p className="text-emerald-400/80 text-sm mt-0.5">
+            <p className="text-emerald-300 font-semibold text-base">Student Registered!</p>
+            <p className="text-emerald-400/80 text-base mt-0.5">
               <span className="font-medium">{success.name}</span> &mdash; ID:{" "}
               <span className="font-mono font-semibold">{success.studentId}</span>
             </p>
-            <p className="text-emerald-500/70 text-xs mt-1">
+            <p className="text-emerald-500/70 text-sm mt-1">
               Enrolled in {success.enrolledCourses} course{success.enrolledCourses !== 1 ? "s" : ""} automatically.
             </p>
           </div>
@@ -169,9 +172,10 @@ export default function RegistrarRegisterView() {
       {/* Form card */}
       <form
         onSubmit={handleSubmit}
+        autoComplete="off"
         className="bg-slate-900/50 border border-slate-800/70 rounded-2xl p-6 space-y-5"
       >
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2">
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2">
           Personal Information
         </p>
 
@@ -180,7 +184,8 @@ export default function RegistrarRegisterView() {
             <input
               type="text"
               className={inputClass}
-              placeholder="e.g. Abebe Bekele"
+              placeholder="Enter full name"
+              autoComplete="off"
               value={form.name}
               onChange={set("name")}
             />
@@ -190,7 +195,8 @@ export default function RegistrarRegisterView() {
             <input
               type="email"
               className={inputClass}
-              placeholder="student@example.com"
+              placeholder="Enter email"
+              autoComplete="off"
               value={form.email}
               onChange={set("email")}
             />
@@ -200,7 +206,8 @@ export default function RegistrarRegisterView() {
             <input
               type="password"
               className={inputClass}
-              placeholder="Leave blank for default"
+              placeholder="Enter password"
+              autoComplete="new-password"
               value={form.password}
               onChange={set("password")}
             />
@@ -209,9 +216,10 @@ export default function RegistrarRegisterView() {
           <Field label="Age">
             <input
               type="number"
-              className={inputClass}
-              placeholder="e.g. 15"
+              className={numberInputClass}
+              placeholder="Enter age"
               min={1}
+              autoComplete="off"
               value={form.age || ""}
               onChange={set("age")}
             />
@@ -230,14 +238,15 @@ export default function RegistrarRegisterView() {
             <input
               type="tel"
               className={inputClass}
-              placeholder="+251 9XX XXX XXX"
+              placeholder="Enter phone number"
+              autoComplete="off"
               value={form.phone}
               onChange={set("phone")}
             />
           </Field>
         </div>
 
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2 pt-1">
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2 pt-1">
           Location Information
         </p>
 
@@ -246,7 +255,8 @@ export default function RegistrarRegisterView() {
             <input
               type="text"
               className={inputClass}
-              placeholder="e.g. East Hararghe"
+              placeholder="Enter zone"
+              autoComplete="off"
               value={form.zone || ""}
               onChange={set("zone")}
             />
@@ -256,7 +266,8 @@ export default function RegistrarRegisterView() {
             <input
               type="text"
               className={inputClass}
-              placeholder="e.g. Chiro"
+              placeholder="Enter woreda"
+              autoComplete="off"
               value={form.woreda || ""}
               onChange={set("woreda")}
             />
@@ -266,7 +277,8 @@ export default function RegistrarRegisterView() {
             <input
               type="text"
               className={inputClass}
-              placeholder="e.g. 01"
+              placeholder="Enter kebele"
+              autoComplete="off"
               value={form.kebele || ""}
               onChange={set("kebele")}
             />
@@ -276,14 +288,15 @@ export default function RegistrarRegisterView() {
             <input
               type="text"
               className={inputClass}
-              placeholder="e.g. Biftu"
+              placeholder="Enter village"
+              autoComplete="off"
               value={form.village || ""}
               onChange={set("village")}
             />
           </Field>
         </div>
 
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2 pt-1">
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest border-b border-slate-800/50 pb-2 pt-1">
           Academic Information
         </p>
 
@@ -334,7 +347,7 @@ export default function RegistrarRegisterView() {
           <button
             type="submit"
             disabled={isPending}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800/50 disabled:text-indigo-300 text-white font-semibold rounded-xl px-6 py-2.5 text-sm transition"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800/50 disabled:text-indigo-300 text-white font-semibold rounded-xl px-6 py-2.5 text-base transition"
           >
             {isPending ? (
               <>

@@ -31,8 +31,9 @@ import AdminUsersView from "./components/admin/AdminUsersView";
 import AdminRegisterView from "./components/admin/AdminRegisterView";
 import AdminDepartmentsView from "./components/admin/AdminDepartmentsView";
 import AdminClassesView from "./components/admin/AdminClassesView";
-import AdminSemestersView from "./components/admin/AdminSemestersView";
 import AdminCoursesView from "./components/admin/AdminCoursesView";
+import StudentFinanceView from "./components/admin/studentfinance";
+import FinanceStudentView from "./components/Finance/financestudent";
 
 const studentNavItems = [
   { id: "about", icon: Info, label: "About Me", color: "text-indigo-400" },
@@ -63,8 +64,12 @@ const adminNavItems = [
   { id: "adminUsers", icon: Users, label: "Users", color: "text-emerald-400" },
   { id: "adminDepartments", icon: Building2, label: "Departments", color: "text-cyan-400" },
   { id: "adminClasses", icon: School, label: "Classes", color: "text-amber-400" },
-  { id: "adminSemesters", icon: CalendarDays, label: "Semesters", color: "text-violet-400" },
   { id: "adminCourses", icon: Layers, label: "Course Init", color: "text-fuchsia-400" },
+  { id: "adminStudentFinance", icon: Trophy, label: "Student Finance", color: "text-emerald-400" },
+];
+
+const financeNavItems = [
+  { id: "financeStudents", icon: Trophy, label: "Finance Students", color: "text-emerald-400" },
 ];
 
 export default function DashboardPage() {
@@ -74,6 +79,7 @@ export default function DashboardPage() {
   const isTeacher       = user?.role === "teacher";
   const isRegistrar     = user?.role === "registrar";
   const isDepartmentHead = user?.role === "departmentHead";
+  const isFinance = user?.role === "finance";
   const isAdmin = user?.role === "admin";
   const [activeTab, setActiveTab] = useState("about");
   const navItems = isAdmin
@@ -84,6 +90,8 @@ export default function DashboardPage() {
     ? registrarNavItems
     : isDepartmentHead
     ? departmentHeadNavItems
+    : isFinance
+    ? financeNavItems
     : studentNavItems;
   const effectiveActiveTab =
     navItems.find((item) => item.id === activeTab)?.id || navItems[0]?.id || "about";
@@ -117,10 +125,10 @@ export default function DashboardPage() {
           return <AdminDepartmentsView />;
         case "adminClasses":
           return <AdminClassesView />;
-        case "adminSemesters":
-          return <AdminSemestersView />;
         case "adminCourses":
           return <AdminCoursesView />;
+        case "adminStudentFinance":
+          return <StudentFinanceView />;
         default:
           return <AdminOverviewView />;
       }
@@ -151,6 +159,10 @@ export default function DashboardPage() {
         case "dhAssignSections": return <DHAssignSectionStudent />;
         default:                 return <DHTimetableView />;
       }
+    }
+
+    if (isFinance) {
+      return <FinanceStudentView />;
     }
 
     switch (effectiveActiveTab) {
@@ -193,6 +205,8 @@ export default function DashboardPage() {
               ? "Registrar Office"
               : isDepartmentHead
               ? "Department Head"
+                : isFinance
+                ? "Finance Office"
               : "Student Portal"}
           </p>
           {navItems.map(({ id, icon: Icon, label, color }) => {

@@ -57,7 +57,7 @@ export default function RegistrationView() {
             ))}
           </ul>
         ) : (
-          <p className="text-slate-500 text-sm italic">No courses found in your registration record.</p>
+          <p className="text-slate-500 text-sm italic">No courses found in your registration record now. You will be able to view them after you are registered.</p>
         )}
       </div>
     </div>

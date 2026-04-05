@@ -1,7 +1,7 @@
 "use client";
 
 import { useStudentProfile } from "../../../../hooks/useStudent";
-import { User as UserIcon, Mail, Phone, Hash, Users, Activity, Globe, Map, Building2, Home, CalendarDays } from "lucide-react";
+import { User as UserIcon, Mail, Phone, Users, Activity, Globe, Map, Building2, Home, CalendarDays } from "lucide-react";
 import { getApiErrorMessage } from "../../../../utils/apiError";
 import { formatEthiopianYear } from "../../../../utils/ethiopianYear";
 
@@ -29,7 +29,6 @@ export default function ApplicationView() {
     { label: "Email Address", value: data?.email, icon: Mail, color: "text-blue-400" },
     { label: "Gender", value: data?.gender, icon: Activity, color: "text-emerald-400", capitalize: true },
     { label: "Phone Number", value: data?.phone, icon: Phone, color: "text-purple-400" },
-    { label: "Student ID", value: data?.studentId, icon: Hash, color: "text-amber-400", isMono: true },
   ];
 
   const addressItems = [

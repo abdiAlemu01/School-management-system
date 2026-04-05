@@ -54,7 +54,7 @@ const scoreColor = (n: number) => {
 
 const inputCls =
   "w-20 px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-700/60 text-slate-100 " +
-  "text-sm text-center focus:outline-none focus:border-indigo-500/60 focus:ring-1 " +
+  "text-base text-center focus:outline-none focus:border-indigo-500/60 focus:ring-1 " +
   "focus:ring-indigo-500/30 transition [appearance:textfield] " +
   "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
@@ -67,7 +67,7 @@ function StepHeader({
 }) {
   return (
     <div className="flex items-center gap-3 mb-3">
-      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-base font-bold shrink-0 ${
         done
           ? "bg-emerald-500 text-white"
           : "bg-indigo-600 text-white"
@@ -75,8 +75,8 @@ function StepHeader({
         {done ? <CheckCircle2 className="w-4 h-4" /> : number}
       </div>
       <div>
-        <p className="text-white font-semibold text-sm leading-tight">{title}</p>
-        <p className="text-slate-500 text-xs">{subtitle}</p>
+        <p className="text-white font-semibold text-base leading-tight">{title}</p>
+        <p className="text-slate-500 text-base">{subtitle}</p>
       </div>
     </div>
   );
@@ -185,7 +185,7 @@ function GradingTable({
       <div className="flex flex-col items-center justify-center py-14 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800/70">
         <Users className="w-10 h-10 text-slate-700 mb-3" />
         <p className="text-white font-medium">No students in this section yet</p>
-        <p className="text-slate-500 text-sm mt-1 text-center max-w-xs">
+        <p className="text-slate-500 text-base mt-1 text-center max-w-xs">
           Students appear here once the registrar enrolls them and the department head assigns them to this section.
         </p>
       </div>
@@ -200,8 +200,8 @@ function GradingTable({
           <div key={a.key} className="flex items-center gap-2.5 px-3 py-2.5 bg-slate-900/50 border border-slate-800/60 rounded-xl">
             <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${a.dot}`} />
             <div>
-              <p className={`text-xs font-bold ${a.color}`}>{a.label}</p>
-              <p className="text-slate-500 text-xs">out of {a.max}</p>
+              <p className={`text-base font-bold ${a.color}`}>{a.label}</p>
+              <p className="text-slate-500 text-base">out of {a.max}</p>
             </div>
           </div>
         ))}
@@ -210,22 +210,22 @@ function GradingTable({
       {/* Table */}
       <div className="rounded-2xl border border-slate-800/70 bg-slate-900/50 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-base">
             <thead className="bg-slate-950/60 border-b border-slate-800/70">
               <tr>
-                <th className="text-left px-5 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider min-w-[190px]">
+                <th className="text-left px-5 py-3 text-slate-400 font-semibold text-base uppercase tracking-wider min-w-[190px]">
                   Student
                 </th>
                 {ASSESSMENTS.map((a) => (
-                  <th key={a.key} className="text-center px-3 py-3 text-xs uppercase tracking-wider">
+                  <th key={a.key} className="text-center px-3 py-3 text-base uppercase tracking-wider">
                     <span className={`${a.color} font-semibold`}>{a.label}</span>
                     <span className="text-slate-600 block font-normal">/ {a.max}</span>
                   </th>
                 ))}
-                <th className="text-center px-3 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                <th className="text-center px-3 py-3 text-slate-400 font-semibold text-base uppercase tracking-wider">
                   Total <span className="text-slate-600 block font-normal">/ 100</span>
                 </th>
-                <th className="text-center px-3 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                <th className="text-center px-3 py-3 text-slate-400 font-semibold text-base uppercase tracking-wider">
                   Action
                 </th>
               </tr>
@@ -239,13 +239,13 @@ function GradingTable({
                   <tr key={student.id} className="border-b border-slate-800/40 last:border-none hover:bg-slate-800/20 transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <span className="w-5 text-slate-600 text-xs text-right shrink-0">{idx + 1}</span>
+                        <span className="w-5 text-slate-600 text-base text-right shrink-0">{idx + 1}</span>
                         <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center shrink-0">
-                          <span className="text-indigo-300 text-xs font-bold">{student.name.charAt(0).toUpperCase()}</span>
+                          <span className="text-indigo-300 text-base font-bold">{student.name.charAt(0).toUpperCase()}</span>
                         </div>
                         <div>
-                          <p className="text-white font-medium text-sm leading-tight">{student.name}</p>
-                          <p className="text-slate-500 text-xs font-mono">{student.studentId}</p>
+                          <p className="text-white font-medium text-base leading-tight">{student.name}</p>
+                          <p className="text-slate-500 text-base font-mono">{student.studentId}</p>
                         </div>
                       </div>
                     </td>
@@ -261,9 +261,9 @@ function GradingTable({
                       </td>
                     ))}
                     <td className="px-3 py-3 text-center">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg border text-sm font-bold ${scoreColor(total)}`}>
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg border text-base font-bold ${scoreColor(total)}`}>
                         {total}
-                        <span className="text-xs font-normal opacity-50 ml-1">/ 100</span>
+                        <span className="text-base font-normal opacity-50 ml-1">/ 100</span>
                       </span>
                     </td>
                     <td className="px-3 py-3 text-center">
@@ -272,7 +272,7 @@ function GradingTable({
                         disabled={!row.markId || isSaving}
                         onClick={() => handleSingleSave(student.id)}
                         title={!row.markId ? "Save All first to create the record" : "Update this student only"}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 hover:bg-violet-600/40 border border-violet-500/30 text-violet-300 text-xs font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 hover:bg-violet-600/40 border border-violet-500/30 text-violet-300 text-base font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition"
                       >
                         {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <PenLine className="w-3 h-3" />}
                         Update
@@ -288,7 +288,7 @@ function GradingTable({
 
       {/* Save bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-        <p className="text-slate-500 text-xs leading-relaxed">
+        <p className="text-slate-500 text-base leading-relaxed">
           <span className="text-slate-300 font-semibold">Save All Marks</span> — creates or overwrites every student's record at once.<br />
           <span className="text-slate-300 font-semibold">Update</span> — edits a single row after records are already created.
         </p>
@@ -296,7 +296,7 @@ function GradingTable({
           type="button"
           onClick={handleBulkSave}
           disabled={bulkMutation.isPending}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900 disabled:text-indigo-400 text-white font-semibold text-sm transition shrink-0 shadow-lg shadow-indigo-900/40"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900 disabled:text-indigo-400 text-white font-semibold text-base transition shrink-0 shadow-lg shadow-indigo-900/40"
         >
           {bulkMutation.isPending
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>
@@ -329,7 +329,7 @@ export default function TeacherAddMarkView() {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="w-10 h-10 rounded-full border-4 border-indigo-500/30 border-t-indigo-500 animate-spin" />
-        <p className="text-slate-500 text-sm">Loading your sections…</p>
+        <p className="text-slate-500 text-base">Loading your sections…</p>
       </div>
     );
   }
@@ -338,10 +338,8 @@ export default function TeacherAddMarkView() {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-2xl border border-slate-800/70">
         <BookOpen className="w-12 h-12 text-slate-600 mb-4" />
-        <p className="text-white font-semibold">No sections assigned yet</p>
-        <p className="text-slate-400 text-sm mt-1 text-center max-w-xs">
-          The department head must add you to a timetable before you can enter marks.
-        </p>
+        <p className="text-white font-semibold">No sections assigned for you yet.</p>
+        
       </div>
     );
   }
@@ -355,8 +353,8 @@ export default function TeacherAddMarkView() {
 
       {/* Page title */}
       <div>
-        <h2 className="text-2xl font-bold text-white">Grade Students</h2>
-        <p className="text-slate-400 text-sm mt-0.5">
+        <h2 className="text-3xl font-bold text-white">Grade Students</h2>
+        <p className="text-slate-400 text-base mt-0.5">
           Follow the steps below to record assessment marks for your students.
         </p>
       </div>
@@ -383,14 +381,14 @@ export default function TeacherAddMarkView() {
                     : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:border-slate-600 hover:text-slate-200"
                 }`}
               >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-base shrink-0 ${
                   active ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-400"
                 }`}>
                   {sem.name.match(/\d+/)?.[0] ?? "?"}
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">{sem.name}</p>
-                  <p className={`text-xs ${active ? "text-indigo-300" : "text-slate-600"}`}>
+                  <p className="font-semibold text-base">{sem.name}</p>
+                  <p className={`text-base ${active ? "text-indigo-300" : "text-slate-600"}`}>
                     {sem.year} Academic Year
                   </p>
                 </div>
@@ -425,8 +423,8 @@ export default function TeacherAddMarkView() {
                     : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-600"
                 }`}
               >
-                <span className="font-semibold text-sm">{s.courseName}</span>
-                <span className={`text-xs mt-0.5 ${active ? "text-indigo-300" : "text-slate-600"}`}>
+                <span className="font-semibold text-base">{s.courseName}</span>
+                <span className={`text-base mt-0.5 ${active ? "text-indigo-300" : "text-slate-600"}`}>
                   Grade {s.grade}
                   {s.section && ` · Section ${s.section}`}
                   {s.stream && ` · ${s.stream}`}
@@ -448,7 +446,7 @@ export default function TeacherAddMarkView() {
 
         {/* Context bar */}
         {readyToGrade && (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 mb-5 rounded-xl bg-slate-950/50 border border-slate-800/60 text-sm">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 mb-5 rounded-xl bg-slate-950/50 border border-slate-800/60 text-base">
             <span className="flex items-center gap-1.5 text-indigo-300 font-semibold">
               <Calendar className="w-4 h-4" />
               {activeSemester?.name}
@@ -469,7 +467,7 @@ export default function TeacherAddMarkView() {
               <CalendarDays className="w-4 h-4 text-violet-400" />
               {formatEthiopianYear(activeSection.academicYear)}
             </span>
-            <span className="ml-auto flex items-center gap-1.5 text-slate-500 text-xs">
+            <span className="ml-auto flex items-center gap-1.5 text-slate-500 text-base">
               <Users className="w-3.5 h-3.5" />
               {activeSection.studentCount} students
             </span>
@@ -479,7 +477,7 @@ export default function TeacherAddMarkView() {
         {!readyToGrade ? (
           <div className="flex flex-col items-center justify-center py-12 text-slate-600 gap-2">
             <GraduationCap className="w-10 h-10 opacity-40" />
-            <p className="text-sm">Complete steps 1 and 2 above to load the grading table.</p>
+            <p className="text-base">Complete steps 1 and 2 above to load the grading table.</p>
           </div>
         ) : (
           <GradingTable

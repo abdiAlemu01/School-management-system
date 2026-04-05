@@ -11,6 +11,7 @@ import teacherRoutes from "./routes/teacher.routes.js";
 import registrarRoutes from "./routes/registrar.routes.js";
 import departmentHeadRoutes from "./routes/departmentHead.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import financeRoutes from "./routes/finance.routes.js";
 
 // Seed
 import { getCoursesByGradeStream } from "./services/registrar.service.js";
@@ -25,8 +26,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://school-ms-f4de.onrender.com",
+];
+
 // Middleware setup
-app.use(cors());
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow same-origin/server-to-server tools (Postman, curl) with no Origin header.
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -43,6 +60,7 @@ app.use("/api/teachers", teacherRoutes);
 app.use("/api/registrar",       registrarRoutes);
 app.use("/api/department",      departmentHeadRoutes);
 app.use("/api/admin",           adminRoutes);
+app.use("/api/finance",         financeRoutes);
 
 // Handle undefined routes
 app.use((req, res, next) => {

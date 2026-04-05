@@ -1,7 +1,7 @@
 import api from "./api";
 
-export type AdminRole = "admin" | "teacher" | "registrar" | "departmentHead";
-export type StaffRole = "teacher" | "registrar" | "departmentHead";
+export type AdminRole = "admin" | "teacher" | "registrar" | "departmentHead" | "finance";
+export type StaffRole = "teacher" | "registrar" | "departmentHead" | "finance";
 export type StreamType = "natural" | "social" | null;
 
 export interface AdminUser {
@@ -20,14 +20,6 @@ export interface AdminDepartment {
   _id: string;
   name: string;
   createdAt?: string;
-}
-
-export interface AdminSemester {
-  _id: string;
-  name: string;
-  year: number;
-  startDate?: string;
-  endDate?: string;
 }
 
 export interface AdminClass {
@@ -125,33 +117,6 @@ export const updateAdminClass = async (id: string, payload: Partial<CreateAdminC
 
 export const deleteAdminClass = async (id: string) => {
   const response = await api.delete(`/admin/classes/${id}`);
-  return response.data.data;
-};
-
-export interface CreateAdminSemesterPayload {
-  name: string;
-  year: number;
-  startDate?: string;
-  endDate?: string;
-}
-
-export const getAdminSemesters = async (): Promise<AdminSemester[]> => {
-  const response = await api.get("/admin/semesters");
-  return response.data.data;
-};
-
-export const createAdminSemester = async (payload: CreateAdminSemesterPayload) => {
-  const response = await api.post("/admin/semesters", payload);
-  return response.data.data;
-};
-
-export const updateAdminSemester = async (id: string, payload: Partial<CreateAdminSemesterPayload>) => {
-  const response = await api.put(`/admin/semesters/${id}`, payload);
-  return response.data.data;
-};
-
-export const deleteAdminSemester = async (id: string) => {
-  const response = await api.delete(`/admin/semesters/${id}`);
   return response.data.data;
 };
 

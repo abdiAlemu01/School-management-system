@@ -11,8 +11,9 @@ import {
 } from "../config/model.js";
 import AppError from "../utils/AppError.js";
 
-const ALLOWED_ADMIN_ROLES = ["admin", "teacher", "registrar", "departmentHead"];
-const STAFF_ROLES = ["teacher", "registrar", "departmentHead"];
+const ALLOWED_ADMIN_ROLES = ["admin", "teacher", "registrar", "departmentHead", "finance"];
+const STAFF_ROLES = ["teacher", "registrar", "departmentHead", "finance"];
+const STAFF_ROLE_ERROR_MESSAGE = "role must be one of: teacher, registrar, departmentHead, finance";
 const GRADE_STREAMS = {
   9: [null],
   10: [null],
@@ -24,6 +25,8 @@ const normalizeStream = (value) => {
   if (value === undefined || value === null || value === "") return null;
   return String(value).trim().toLowerCase();
 };
+
+const normalizeRole = (value) => String(value ?? "").trim().toLowerCase();
 
 const normalizeSection = (value) => String(value).trim().toUpperCase();
 const normalizeAcademicYear = (value) => String(value).trim();
@@ -93,11 +96,12 @@ const syncRoleProfile = async (userId, role) => {
 // Users
 export const createAdminUser = async (payload) => {
   const { name, email, password, role, age, gender, phone, address } = payload;
+  const normalizedRole = normalizeRole(role);
   if (!name || !email || !password || !role) {
     throw new AppError("name, email, password and role are required", 400);
   }
-  if (!STAFF_ROLES.includes(role)) {
-    throw new AppError(`role must be one of: ${STAFF_ROLES.join(", ")}`, 400);
+  if (!STAFF_ROLES.includes(normalizedRole)) {
+    throw new AppError(STAFF_ROLE_ERROR_MESSAGE, 400);
   }
 
   const existing = await User.findOne({ email: email.trim().toLowerCase() });
@@ -110,14 +114,14 @@ export const createAdminUser = async (payload) => {
     name: name.trim(),
     email: email.trim().toLowerCase(),
     password: hashedPassword,
-    role,
+    role: normalizedRole,
     age: Number(age) || 30,
     gender,
     phone,
     address,
   });
 
-  await syncRoleProfile(user._id, role);
+  await syncRoleProfile(user._id, normalizedRole);
 
   return {
     id: user._id,
@@ -147,10 +151,11 @@ export const updateAdminUser = async (id, payload) => {
     updates.email = normalizedEmail;
   }
   if (payload.role !== undefined) {
-    if (!STAFF_ROLES.includes(payload.role)) {
-      throw new AppError(`role must be one of: ${STAFF_ROLES.join(", ")}`, 400);
+    const normalizedRole = normalizeRole(payload.role);
+    if (!STAFF_ROLES.includes(normalizedRole)) {
+      throw new AppError(STAFF_ROLE_ERROR_MESSAGE, 400);
     }
-    updates.role = payload.role;
+    updates.role = normalizedRole;
   }
   if (payload.password !== undefined) {
     updates.password = await bcrypt.hash(payload.password, 10);
@@ -162,8 +167,8 @@ export const updateAdminUser = async (id, payload) => {
 
   const updated = await User.findByIdAndUpdate(id, updates, { new: true }).select("-password");
 
-  if (payload.role !== undefined && payload.role !== user.role) {
-    await syncRoleProfile(id, payload.role);
+  if (payload.role !== undefined && updates.role !== user.role) {
+    await syncRoleProfile(id, updates.role);
   }
 
   return updated;

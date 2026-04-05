@@ -14,7 +14,7 @@ const userSchema = new Schema({
 
   role: {
     type: String,
-    enum: ["admin", "teacher", "student", "registrar", "departmentHead"],
+    enum: ["admin", "teacher", "student", "registrar", "departmentHead", "finance"],
     required: true,
     index: true
   },
@@ -284,6 +284,77 @@ const timetableSchema = new Schema({
 }, { timestamps: true });
 
 export const Timetable = model("Timetable", timetableSchema);
+
+
+// ======================
+// 16. FINANCE FEE SETTINGS
+// ======================
+const financeFeeSchema = new Schema(
+  {
+    grade: {
+      type: Number,
+      enum: [9, 10, 11, 12],
+      required: true,
+      unique: true,
+      index: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+export const FinanceFee = model("FinanceFee", financeFeeSchema);
+
+
+// ======================
+// 17. STUDENT FINANCE RECORD
+// ======================
+const studentFinanceSchema = new Schema(
+  {
+    studentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
+      unique: true,
+      index: true,
+    },
+    grade: {
+      type: Number,
+      enum: [9, 10, 11, 12],
+      required: true,
+      index: true,
+    },
+    totalFee: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    paidAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    remainingBalance: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+    status: {
+      type: String,
+      enum: ["Paid", "Partially Paid", "Unpaid"],
+      default: "Paid",
+      index: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export const StudentFinance = model("StudentFinance", studentFinanceSchema);
 
 
 

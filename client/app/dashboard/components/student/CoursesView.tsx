@@ -28,8 +28,8 @@ export default function CoursesView() {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-slate-900/50 rounded-2xl border border-slate-800/70">
         <BookOpen className="w-12 h-12 text-slate-500 mb-4" />
-        <p className="text-white font-medium">No courses found</p>
-        <p className="text-slate-400 text-sm mt-1">You are not enrolled in any courses yet.</p>
+        <h1 className="text-xl font-bold text-white">No courses found</h1>
+        <p className="text-slate-400 text-sm mt-1">Released for you after you registered.</p>
       </div>
     );
   }
