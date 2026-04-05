@@ -13,23 +13,23 @@ Use the following screenshots to showcase the main areas of the system:
 
 ### Login Page
 
-![Login Page](client/public/assets/LoginPage.png)
+![Login Page](assets/LoginPage.png)
 
 ### Admin Dashboard
 
-![Admin Dashboard](client/public/assets/AdminDashboard.png)
+![Admin Dashboard](assets/AdminDashboard.png)
 
 ### Department Dashboard
 
-![Department Dashboard](client/public/assets/DepertementDashboard.png)
+![Department Dashboard](assets/DepertementDashboard.png)
 
 ### Finance Dashboard
 
-![Finance Dashboard](client/public/assets/FinanceDashboard.png)
+![Finance Dashboard](assets/FinanceDashboard.png)
 
 ### Student Dashboard
 
-![Student Dashboard](client/public/assets/StudentDashboard.png)
+![Student Dashboard](assets/StudentDashboard.png)
 
 ---
 
